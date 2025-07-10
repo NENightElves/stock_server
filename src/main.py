@@ -1,9 +1,11 @@
 import flask
+import flask_cors
 from flask import request
 import waitress
 import stock_util
 
 app = flask.Flask(__name__)
+flask_cors.CORS(app)
 
 
 @app.route('/api/stock')
