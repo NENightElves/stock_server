@@ -10,10 +10,13 @@ def get_utc_eight():
     return datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=8)
 
 
-def get_stock_data_by_days(stock_code, days=60):
-    today = get_utc_eight()
-    start_date = (today - datetime.timedelta(days=days)).strftime('%Y%m%d')
-    end_date = today.strftime('%Y%m%d')
+def get_stock_data_by_days(stock_code, days=60, end_date=None):
+    if end_date is None:
+        end_date = get_utc_eight()
+    else:
+        end_date = datetime.datetime.strptime(end_date, '%Y%m%d')
+    start_date = (end_date - datetime.timedelta(days=days)).strftime('%Y%m%d')
+    end_date = end_date.strftime('%Y%m%d')
     stock_data = get_stock_data(stock_code, start_date, end_date)
     return stock_data
 
