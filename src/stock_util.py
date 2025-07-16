@@ -17,11 +17,11 @@ def get_stock_data_by_days(stock_code, days=60, end_date=None):
         end_date = datetime.datetime.strptime(end_date, '%Y%m%d')
     start_date = (end_date - datetime.timedelta(days=days)).strftime('%Y%m%d')
     end_date = end_date.strftime('%Y%m%d')
-    stock_data = get_stock_data(stock_code, start_date, end_date)
+    stock_data = get_stock_data_by_date(stock_code, start_date, end_date)
     return stock_data
 
 
-def get_stock_data(stock_code, start_date, end_date, cache=True):
+def get_stock_data_by_date(stock_code, start_date, end_date, cache=True):
     column_map = {
         '日期': 'date',
         '股票代码': 'symbol',

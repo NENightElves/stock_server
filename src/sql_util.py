@@ -103,7 +103,7 @@ def set_update_date(stock_code, start_date, end_date):
                          {'symbol': stock_code, 'log': json.dumps(mdss)})
 
 
-def get_stock_data(stock_code, last_date, number=30):
+def get_stock_data_by_days(stock_code, last_date, number=30):
     with sql_engine.connect() as conn:
         df = pd.read_sql_query('SELECT * FROM (SELECT * FROM stocks WHERE symbol=:symbol AND date<=:last_date ORDER BY date DESC LIMIT :number) ORDER BY date', conn,
                                params={'symbol': stock_code, 'last_date': last_date, 'number': number})
