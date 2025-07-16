@@ -3,6 +3,7 @@ import flask_cors
 from flask import request
 import waitress
 import stock_util
+import logging
 
 app = flask.Flask(__name__)
 flask_cors.CORS(app)
@@ -18,4 +19,5 @@ def stock():
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     waitress.serve(app, port=5000)
