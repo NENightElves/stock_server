@@ -2,17 +2,23 @@ import akshare as ak
 import pandas as pd
 import numpy as np
 import datetime
+import sql_util
+import logging
 
 
-def get_stock_data_by_days(stock_code, days=30):
-    today = datetime.datetime.now()
+def get_utc_eight():
+    return datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=8)
+
+
+def get_stock_data_by_days(stock_code, days=60):
+    today = get_utc_eight()
     start_date = (today - datetime.timedelta(days=days)).strftime('%Y%m%d')
     end_date = today.strftime('%Y%m%d')
     stock_data = get_stock_data(stock_code, start_date, end_date)
     return stock_data
 
 
-def get_stock_data(stock_code, start_date, end_date):
+def get_stock_data(stock_code, start_date, end_date, cache=True):
     column_map = {
         '日期': 'date',
         '股票代码': 'symbol',
@@ -27,8 +33,25 @@ def get_stock_data(stock_code, start_date, end_date):
         '涨跌额': 'change_amt',
         '换手率': 'turnover_rate'
     }
+    if cache:
+        if sql_util.check_in_cache(stock_code, start_date, end_date):
+            return sql_util.get_stock_data_by_date(stock_code, start_date, end_date)
+        elif get_utc_eight().time() < datetime.time(hour=15, minute=10) and sql_util.check_in_cache(stock_code, start_date, (datetime.datetime.strptime(end_date, '%Y%m%d')-datetime.timedelta(days=1)).strftime('%Y%m%d')):
+            logging.log(logging.INFO, "fetch one from akshare")
+            stock_data_1 = ak.stock_zh_a_hist(symbol=stock_code, start_date=end_date, end_date=end_date)
+            stock_data_1.rename(columns=column_map, inplace=True)
+            stock_data = sql_util.get_stock_data_by_date(stock_code, start_date, end_date)
+            stock_data = pd.concat([stock_data, stock_data_1], axis=0)
+            return stock_data
+    logging.log(logging.INFO, "fetch from akshare")
     stock_data = ak.stock_zh_a_hist(symbol=stock_code, start_date=start_date, end_date=end_date)
     stock_data.rename(columns=column_map, inplace=True)
+    if get_utc_eight().time() < datetime.time(hour=15, minute=10):
+        sql_util.insert_stock_data(stock_data.iloc[:-1])
+        sql_util.set_update_date(stock_code, start_date, (datetime.datetime.strptime(end_date, '%Y%m%d')-datetime.timedelta(days=1)).strftime('%Y%m%d'))
+    else:
+        sql_util.insert_stock_data(stock_data)
+        sql_util.set_update_date(stock_code, start_date, end_date)
     return stock_data
 
 
