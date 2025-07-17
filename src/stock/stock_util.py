@@ -2,7 +2,7 @@ import akshare as ak
 import pandas as pd
 import numpy as np
 import datetime
-import sql_util
+import stock.sql_util as sql_util
 import logging
 
 

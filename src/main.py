@@ -2,7 +2,7 @@ import flask
 import flask_cors
 from flask import request
 import waitress
-import stock_util
+import stock.stock_util as stock_util
 import logging
 
 app = flask.Flask(__name__)
