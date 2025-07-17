@@ -6,4 +6,4 @@ RUN cd stock_server && pip install -r requirements.txt
 
 EXPOSE 5000
 WORKDIR /app/stock_server/src
-CMD ["python", "main.py"]
+CMD ["python", "-m", "waitress", "main:app"]

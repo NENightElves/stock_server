@@ -8,6 +8,7 @@ import stock.stock_util as stock_util
 import llm.llm_util as llm_util
 import llm.prompt_util as prompt_util
 
+logging.basicConfig(level=logging.INFO)
 app = flask.Flask(__name__)
 flask_cors.CORS(app)
 
@@ -64,5 +65,4 @@ def stock_analyse():
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
-    waitress.serve(app, port=5000)
+    app.run(debug=True)
