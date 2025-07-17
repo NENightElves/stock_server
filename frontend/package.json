@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@internationalized/date": "^3.8.2",
     "@nuxt/ui": "^3.2.0",
     "nuxt": "^3.17.7",
     "typescript": "^5.8.3",
