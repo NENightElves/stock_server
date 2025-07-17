@@ -15,7 +15,6 @@ def prompt_once_stock(llm, stock_code, stock_data='', stream=False):
     prompt_template = PromptTemplate.from_template(pstr)
     chain = prompt_template | llm
     if stream:
-        for chunk in chain.stream(fdict):
-            yield chunk.content
+        return chain.stream(fdict)
     else:
         return chain.invoke(fdict).content
