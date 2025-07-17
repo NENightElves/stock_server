@@ -1,16 +1,27 @@
+import os
 import flask
 import flask_cors
-import waitress
 import init_env
 import logging
-from flask import request, Response
+from flask import request, Response, send_file
 import stock.stock_util as stock_util
 import llm.llm_util as llm_util
 import llm.prompt_util as prompt_util
 
 logging.basicConfig(level=logging.INFO)
-app = flask.Flask(__name__)
+if os.path.exists('static'):
+    app = flask.Flask(__name__, static_folder='static', static_url_path='')
+else:
+    app = flask.Flask(__name__)
 flask_cors.CORS(app)
+
+
+@app.route('/')
+def index():
+    if os.path.exists('static'):
+        return send_file('./static/index.html')
+    else:
+        return 'Stock Server'
 
 
 @app.route('/api/stock_data')
