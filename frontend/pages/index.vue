@@ -42,7 +42,7 @@ async function analyse1() {
 </script>
 
 <template>
-    <div class="min-h-screen bg-gray-100">
+    <div class="min-h-screen">
         <div class="mx-auto pt-16 max-w-4xl">
             <UCard>
                 <div class="space-y-3 px-4">
@@ -54,7 +54,7 @@ async function analyse1() {
                     <div class="flex space-x-4">
                         <UButtonGroup>
                             <UBadge color="neutral" variant="outline" label="days"></UBadge>
-                            <UInput v-model="days"></UInput>
+                            <UInput v-model="days" class="min-w-10"></UInput>
                         </UButtonGroup>
                         <UButtonGroup>
                             <UBadge color="neutral" variant="outline" label="End Date"></UBadge>
@@ -69,7 +69,8 @@ async function analyse1() {
                         </UButtonGroup>
                         <UButton @click="analyse1">Analyse</UButton>
                     </div>
-                    <div class="w-full max-w-none min-h-50 px-2 prose bg-gray-100 border-2">
+                    <div
+                        class="w-full max-w-none min-h-50 px-2 prose bg-gray-100 dark:bg-gray-900 dark:text-gray-50 dark:border-gray-500 border-2">
                         <MDC :value="content"></MDC>
                     </div>
                 </div>
