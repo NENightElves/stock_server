@@ -62,8 +62,8 @@ async function analyse1() {
                         </UButtonGroup>
                         <UButton @click="analyse1">Analyse</UButton>
                     </div>
-                    <div>
-                        <UTextarea class="w-full" :rows="20" v-model="content" disabled></UTextarea>
+                    <div class="w-full max-w-none min-h-50 prose bg-gray-100 border-2">
+                        <MDC :value="content"></MDC>
                     </div>
                 </div>
             </UCard>
