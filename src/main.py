@@ -69,14 +69,13 @@ def stock_analyse():
     ret_data = df.to_dict('records')
     llm = llm_util.get_llm_deepseek()
     headers = {
-        'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache'
     }
 
     def make_response():
         for chunk in prompt_util.prompt_once_stock(llm, stock_code, ret_data, stream=True):
             yield chunk.content
-    return Response(make_response(), headers=headers)
+    return Response(make_response(), mimetype='text/event-stream', headers=headers)
 
 
 if __name__ == '__main__':
