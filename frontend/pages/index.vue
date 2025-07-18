@@ -9,16 +9,23 @@ const end_date1 = ref(today(getLocalTimeZone()))
 const content = ref('')
 
 async function analyse1() {
-    var url = '/api/stock_analyse?code=' + stock_code.value
+    var url = '/api/stock_analyse'
+    var j = {
+        code: stock_code.value
+    }
     if (days.value) {
-        url += '&days=' + days.value
+        j.days = days.value
     }
     if (end_date1.value) {
-        url += '&end_date=' + end_date1.value.toString().replaceAll('-', '')
+        j.end_date = end_date1.value.toString().replaceAll('-', '')
     }
     const response = await $fetch(url, {
         baseURL: baseURL,
-        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        body: JSON.stringify(j),
         responseType: 'stream'
     }
     )
@@ -62,7 +69,7 @@ async function analyse1() {
                         </UButtonGroup>
                         <UButton @click="analyse1">Analyse</UButton>
                     </div>
-                    <div class="w-full max-w-none min-h-50 prose bg-gray-100 border-2">
+                    <div class="w-full max-w-none min-h-50 px-2 prose bg-gray-100 border-2">
                         <MDC :value="content"></MDC>
                     </div>
                 </div>

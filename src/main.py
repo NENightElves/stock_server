@@ -47,20 +47,21 @@ def stock_data():
     return {"msg": "success", "data": ret_data}
 
 
-@app.route('/api/stock_analyse')
+@app.route('/api/stock_analyse', methods=['POST'])
 def stock_analyse():
-    stock_code = request.args.get('code')
+    j = request.json
+    stock_code = j['code']
     stock_data = None
-    if request.args.get('days'):
-        days = int(request.args.get('days'))
-        if request.args.get('end_date'):
-            end_date = request.args.get('end_date')
+    if j['days']:
+        days = int(j['days'])
+        if j['end_date']:
+            end_date = j['end_date']
             stock_data = stock_util.get_stock_data_by_days(stock_code, days=days, end_date=end_date)
         else:
             stock_data = stock_util.get_stock_data_by_days(stock_code, days=days)
-    elif request.args.get('start_date') and request.args.get('end_date'):
-        start_date = request.args.get('start_date')
-        end_date = request.args.get('end_date')
+    elif j['start_date'] and j['end_date']:
+        start_date = j['start_date']
+        end_date = j['end_date']
         stock_data = stock_util.get_stock_data_by_date(stock_code, start_date, end_date)
     else:
         stock_data = stock_util.get_stock_data_by_days(stock_code)
