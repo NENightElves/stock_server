@@ -52,14 +52,14 @@ def stock_analyse():
     j = request.json
     stock_code = j['code']
     stock_data = None
-    if j['days']:
+    if 'days' in j:
         days = int(j['days'])
-        if j['end_date']:
+        if 'end_date' in j:
             end_date = j['end_date']
             stock_data = stock_util.get_stock_data_by_days(stock_code, days=days, end_date=end_date)
         else:
             stock_data = stock_util.get_stock_data_by_days(stock_code, days=days)
-    elif j['start_date'] and j['end_date']:
+    elif 'start_date' in j and 'end_date' in j:
         start_date = j['start_date']
         end_date = j['end_date']
         stock_data = stock_util.get_stock_data_by_date(stock_code, start_date, end_date)
@@ -68,14 +68,29 @@ def stock_analyse():
     df = stock_util.calc_stock_metrics(stock_data)
     df['date'] = df['date'].apply(lambda x: x.strftime('%Y-%m-%d'))
     ret_data = df.to_dict('records')
-    llm = llm_util.get_llm_deepseek()
     headers = {
         'Cache-Control': 'no-cache'
     }
+    vendor = 'dashscope'
+    if 'llm' in j:
+        if j['llm'] == 'deepseek':
+            vendor = 'deepseek'
+            if 'llm_model' in j:
+                llm = llm_util.get_llm_deepseek(model=j['llm_model'])
+            else:
+                llm = llm_util.get_llm_deepseek()
+    else:
+        if 'llm_model' in j:
+            llm = llm_util.get_llm_tongyi(model=j['llm_model'])
+        else:
+            llm = llm_util.get_llm_tongyi()
 
     def make_response():
         for chunk in prompt_util.prompt_once_stock(llm, stock_code, ret_data, stream=True):
-            yield chunk.content
+            if vendor == 'deepseek':
+                yield chunk.content
+            else:
+                yield chunk
     return Response(make_response(), mimetype='text/event-stream', headers=headers)
 
 
